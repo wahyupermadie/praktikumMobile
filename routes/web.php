@@ -14,3 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('member/', 'MemberController');
+Route::GET('member/{id}','MemberController@show');
