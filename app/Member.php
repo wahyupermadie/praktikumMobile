@@ -7,15 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     protected $fillable = [
-        'Nama','Email','Kelamin','Hobi','Picture',
+        'Nama','Email','kelamin_id','Picture',
     ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-    ];
+    function sex()
+    {
+        return $this->belongsTo('App\Sex');
+    }
 }

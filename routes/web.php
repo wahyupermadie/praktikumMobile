@@ -17,3 +17,5 @@ Route::get('/', function () {
 
 Route::resource('member/', 'MemberController');
 Route::GET('member/{id}','MemberController@show');
+Route::DELETE('member/{id}','MemberController@destroy');
+Route::PUT('member/update/{id}','MemberController@update');

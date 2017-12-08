@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Member;
+use App\Sex;
+use DB;
 class MemberController extends Controller
 {
     /**
@@ -13,9 +15,11 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $member = Member::all();
-        return response()->json($member);
-        
+        $member = DB::table('members')
+                    ->join('tb_kelamin', 'tb_kelamin.id' , '=', 'members.sex_id')
+                    ->select('members.*','tb_kelamin.name_sex')
+                    ->get();
+        return response()->json($member);   
     }
 
     /**
@@ -48,7 +52,11 @@ class MemberController extends Controller
         $member->Picture = $fileName;
         $member->Nama=$nama;
         $member->Email=$email;
-        $member->Kelamin=$sex;
+        if($sex = 'Laki - Laki'){
+            $member->sex_id=1;
+        }else{
+            $member->sex_id=2;
+        }
         $member->save();
 
         return response()->json([
@@ -78,7 +86,7 @@ class MemberController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
 
     /**
@@ -90,7 +98,26 @@ class MemberController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data= $request->all();
+        $member = Member::find($id);
+        $member->Nama=$data['Nama'];
+        $member->Email=$data['Email'];
+        if($data['Sex'] = 'Laki - Laki'){
+            $member->sex_id=1;
+        }else{
+            $member->sex_id=2;
+        }
+        if(isset($data['Picture'])){
+            $image=base64_decode($data['Picture']) ;
+            $fileName = $data['Nama'].'.jpg';
+            $path=public_path().'/images/'.$fileName;
+            file_put_contents($path,$image);
+            $member->Picture = $fileName;
+        }
+        $member->save();
+        return response()->json([
+            'success' => 'Data Berhasil Di Update'
+        ]);
     }
 
     /**
@@ -101,6 +128,9 @@ class MemberController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $member = Member::find($id)->delete();
+        return response()->json([
+            'success' => 'Data Berhasil Di Hapus'
+        ]);
     }
 }
